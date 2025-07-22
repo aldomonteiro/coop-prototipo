@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Contrato - Sistema de Gestão</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-button.active {
+            border-color: #2563eb;
+            color: #2563eb;
+            background-color: #eff6ff;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .status-pill {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        .status-aprovado { background-color: #dcfce7; color: #166534; }
+        .status-pendente { background-color: #fef9c3; color: #854d0e; }
+        .status-assinado { background-color: #e0e7ff; color: #3730a3; }
+        .status-aguardando { background-color: #fee2e2; color: #991b1b; }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Estilos para o tree-view simulado */
+        .tree-view .level-2 { margin-left: 1.5rem; }
+        .tree-view .level-3 { margin-left: 3rem; }
+        .tree-view .level-4 { margin-left: 4.5rem; }
+        .tree-view .level-5 { margin-left: 6rem; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Novo Contrato</h1>
+            <p class="text-gray-600 mt-1">Preencha os dados abaixo para criar um novo contrato comercial.</p>
+        </header>
+
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-md">
+            
+            <!-- Cabeçalho do Contrato -->
+            <div class="border-b pb-6 mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Dados Principais</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Tipo de Contrato -->
+                    <div>
+                        <label for="contract-type-selector" class="block text-sm font-medium text-gray-700">Tipo de Contrato</label>
+                        <select id="contract-type-selector" class="mt-1 w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                            <option value="compra" selected>Contrato de Compra</option>
+                            <option value="venda">Contrato de Venda</option>
+                        </select>
+                    </div>
+                    <!-- Fornecedor -->
+                    <div>
+                        <label for="fornecedor" class="block text-sm font-medium text-gray-700">Fornecedor / Cliente</label>
+                        <input type="text" id="fornecedor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Pesquisar por nome...">
+                        <button class="text-xs text-blue-600 hover:underline mt-1">+ Adicionar Filiais</button>
+                    </div>
+                    <!-- Setor de Acordos (Compra) -->
+                    <div id="field-setor-acordos">
+                        <label for="setor-acordos" class="block text-sm font-medium text-gray-700">Setor de Acordos</label>
+                        <select id="setor-acordos" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option>Marketing</option>
+                            <option>Compras Nacionais</option>
+                            <option>Mercearia Seca</option>
+                            <option>Perecíveis</option>
+                        </select>
+                    </div>
+                    <!-- Comprador (Venda) -->
+                    <div id="field-comprador" class="hidden">
+                        <label for="comprador" class="block text-sm font-medium text-gray-700">Comprador</label>
+                        <select id="comprador" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option>João Silva</option>
+                            <option>Maria Oliveira</option>
+                            <option>Carlos Pereira</option>
+                            <option>Ana Costa</option>
+                            <option>Pedro Martins</option>
+                        </select>
+                    </div>
+                    <!-- Representante COOP -->
+                    <div>
+                        <label for="representante-coop" class="block text-sm font-medium text-gray-700">Representante COOP</label>
+                        <input type="text" id="representante-coop" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Selecionar usuário interno">
+                    </div>
+                     <!-- Representante Fornecedor -->
+                    <div>
+                        <label for="representante-fornecedor" class="block text-sm font-medium text-gray-700">Representante Fornecedor</label>
+                        <input type="text" id="representante-fornecedor" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Nome do representante">
+                    </div>
+                    <!-- Vigência -->
+                    <div class="flex items-end space-x-2">
+                        <div>
+                            <label for="vigencia-de" class="block text-sm font-medium text-gray-700">Vigência De</label>
+                            <input type="date" id="vigencia-de" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        </div>
+                        <div>
+                            <label for="vigencia-ate" class="block text-sm font-medium text-gray-700">Até</label>
+                            <input type="date" id="vigencia-ate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        </div>
+                    </div>
+                    <!-- Status -->
+                    <div class="col-span-1 md:col-span-2 lg:col-span-2 grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status Aprovação</label>
+                            <div class="mt-2"><span class="status-pill status-pendente">Pendente Aprovação</span></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Status Assinatura</label>
+                            <div class="mt-2"><span class="status-pill status-aguardando">Aguardando</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Abas de Navegação -->
+            <div class="my-6">
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                        <button class="tab-button active whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm" data-tab="condicoes-gerais">Condições Gerais</button>
+                        <button class="tab-button whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm" data-tab="escopo">Escopo</button>
+                        <button class="tab-button whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm" data-tab="condicoes-financeiras">Cond. Financeiras</button>
+                        <button class="tab-button whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm" data-tab="amarracao-debitos">Amarração/Débitos</button>
+                        <button class="tab-button whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm" data-tab="template">Template</button>
+                        <button class="tab-button whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm" data-tab="contabilidade">Contabilidade</button>
+                        <button class="tab-button whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm" data-tab="historico">Histórico</button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Conteúdo das Abas -->
+            <div id="tab-contents" class="mt-6">
+                <div id="condicoes-gerais" class="tab-content active fade-in"></div>
+                <div id="escopo" class="tab-content fade-in"></div>
+                <div id="condicoes-financeiras" class="tab-content fade-in"></div>
+                <div id="amarracao-debitos" class="tab-content fade-in"></div>
+                <div id="template" class="tab-content fade-in"></div>
+                <div id="contabilidade" class="tab-content fade-in"></div>
+                <div id="historico" class="tab-content fade-in"></div>
+            </div>
+
+            <!-- Ações do Formulário -->
+            <div class="mt-10 pt-6 border-t flex justify-end space-x-3">
+                <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">Salvar Rascunho</button>
+                <button type="button" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">Enviar para Aprovação</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Lógica das Abas ---
+            const tabs = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const target = tab.getAttribute('data-tab');
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === target) {
+                            content.classList.add('active');
+                            // Preencher conteúdo dinamicamente ao mostrar a aba
+                            fillTabContent(content.id);
+                        }
+                    });
+                });
+            });
+
+            // --- Lógica do Formulário ---
+            const contractTypeSelector = document.getElementById('contract-type-selector');
+            const fieldSetorAcordos = document.getElementById('field-setor-acordos');
+            const fieldComprador = document.getElementById('field-comprador');
+            
+            function toggleContractTypeFields() {
+                const type = contractTypeSelector.value;
+                fieldSetorAcordos.style.display = type === 'compra' ? 'block' : 'none';
+                fieldComprador.style.display = type === 'venda' ? 'block' : 'none';
+                
+                // Atualiza a aba ativa que pode depender do tipo
+                const activeTabId = document.querySelector('.tab-button.active').dataset.tab;
+                fillTabContent(activeTabId);
+            }
+            contractTypeSelector.addEventListener('change', toggleContractTypeFields);
+
+            // --- Preenchimento de Datas ---
+            const dateDe = document.getElementById('vigencia-de');
+            const dateAte = document.getElementById('vigencia-ate');
+            const today = new Date();
+            const oneYearLater = new Date(today.getFullYear() + 1, today.getMonth(), today.getDate());
+            dateDe.value = today.toISOString().split('T')[0];
+            dateAte.value = oneYearLater.toISOString().split('T')[0];
+
+            // --- Preenchimento inicial ---
+            fillTabContent('condicoes-gerais'); // Carrega o conteúdo da primeira aba
+        });
+        
+        // --- Função para preencher o conteúdo das abas dinamicamente ---
+        function fillTabContent(tabId) {
+            const container = document.getElementById(tabId);
+            if (!container) return;
+
+            let content = '';
+            const contractType = document.getElementById('contract-type-selector').value;
+
+            switch (tabId) {
+                case 'condicoes-gerais':
+                    content = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Periodicidade da Consolidação</label>
+                                <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option>Diária</option><option>Semanal (último dia)</option><option>Mensal (primeiro dia)</option><option>Mensal (último dia)</option><option>Bimestral</option><option>Trimestral</option><option>Anual</option><option>Uma vez</option></select>
+                                <p class="text-xs text-gray-500 mt-1">Define a frequência de cálculo. A COOP opera com periodicidade diária.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Forma de Pagamento</label>
+                                <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option>Encontro de Contas</option><option>Depósito</option><option>Duplicata</option><option>Boleto</option><option>Cheque</option><option>Dinheiro</option><option>Pix</option></select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Prazo de Pagamento</label>
+                                <input type="text" value="45 dias (Padrão SAP)" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            </div>
+                        </div>
+                        ${contractType === 'venda' ? `
+                        <div class="mt-8 border-t pt-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Configurações de Venda</h3>
+                            <div class="space-y-6">
+                                <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg">
+                                    <span class="font-medium">Renovação Automática</span>
+                                    <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Descrição da Contrapartida</label>
+                                        <textarea rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Ex: Exposição de produtos..."></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Prova de Execução</label>
+                                        <input type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Cole o link da foto...">
+                                        <button class="mt-2 text-sm text-blue-600 hover:text-blue-800">Anexar Arquivo</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>` : ''}
+                    `;
+                    break;
+                case 'escopo':
+                    content = `
+                        <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                             <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-semibold text-blue-800">Funcionalidade "Considerar Produtos Novos"</h4>
+                                    <p class="text-sm text-blue-700">Atualiza diariamente o sortimento do fornecedor para este contrato.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="considerar-novos-toggle" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                                </label>
+                            </div>
+                            <div id="considerar-novos-options" class="hidden mt-4 pt-4 border-t border-blue-200 space-y-2">
+                                <label class="flex items-center"><input type="radio" name="novos-produtos-rule" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><span class="ml-2 text-sm">Aplicar a todos os produtos novos do fornecedor.</span></label>
+                                <label class="flex items-center"><input type="radio" name="novos-produtos-rule" class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"><span class="ml-2 text-sm">Desconsiderar exceções (buscar produtos para excluir da regra).</span></label>
+                            </div>
+                        </div>
+
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Definição de Escopo Manual</h3>
+                        <div class="border p-6 rounded-lg bg-gray-50">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center"><input type="radio" name="scope-type" class="h-4 w-4 text-blue-600 border-gray-300" checked><span class="ml-2 font-medium">Incluir</span></label>
+                                    <label class="flex items-center"><input type="radio" name="scope-type" class="h-4 w-4 text-blue-600 border-gray-300"><span class="ml-2 font-medium text-red-600">Excluir (Exceção)</span></label>
+                                </div>
+                                <button class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                                    Adicionar ao Escopo
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t">
+                                <div class="space-y-4">
+                                    <h4 class="font-semibold text-gray-800">Produtos</h4>
+                                    <div class="tree-view space-y-2">
+                                        <label class="font-medium text-sm">Estrutura Mercadológica</label>
+                                        <div><label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Toda a Companhia</span></label></div>
+                                        <div class="level-2"><label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Departamento</span></label></div>
+                                        <div class="level-3"><label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Sessão</span></label></div>
+                                        <div class="level-4"><label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Grupo</span></label></div>
+                                        <div class="level-5"><label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Subgrupo</span></label></div>
+                                        <div class="level-2"><label class="flex items-center"><input type="text" placeholder="Buscar produto por código ou nome..." class="w-full text-sm border-gray-300 rounded-md shadow-sm"></label></div>
+                                    </div>
+                                    <div>
+                                        <label class="font-medium text-sm">Tipo de Item</label>
+                                        <div class="mt-2 grid grid-cols-2 gap-2">
+                                            <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Marca Própria</span></label>
+                                            <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Sazonal</span></label>
+                                            <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Cotação</span></label>
+                                            <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300"><span class="ml-2">Importado</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <h4 class="font-semibold text-gray-800">Localização</h4>
+                                    <div>
+                                        <label class="flex items-center"><input type="radio" name="location-rule" class="h-4 w-4 text-blue-600 border-gray-300"><span class="ml-2">Toda a COOP</span></label>
+                                    </div>
+                                    <div>
+                                        <label class="flex items-center"><input type="radio" name="location-rule" class="h-4 w-4 text-blue-600 border-gray-300"><span class="ml-2">Lojas Específicas</span></label>
+                                        <button class="ml-4 text-sm text-blue-600 hover:underline">Clique para selecionar as lojas</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Itens do Escopo</h3>
+                            <div class="bg-white rounded-lg shadow-sm overflow-hidden border">
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                        <thead class="bg-gray-50">
+                                            <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                <th class="px-4 py-3">Loja</th>
+                                                <th class="px-4 py-3">Departamento</th>
+                                                <th class="px-4 py-3">Sessão</th>
+                                                <th class="px-4 py-3">Grupo</th>
+                                                <th class="px-4 py-3">Subgrupo</th>
+                                                <th class="px-4 py-3">Tipo de Item</th>
+                                                <th class="px-4 py-3">Produto</th>
+                                                <th class="px-4 py-3 text-center">Ação</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            <tr>
+                                                <td class="px-4 py-2">Toda a COOP</td>
+                                                <td class="px-4 py-2">Bebidas</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2 text-center"><button class="text-red-500 hover:text-red-700" title="Excluir"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></button></td>
+                                            </tr>
+                                            <tr class="bg-gray-50">
+                                                <td class="px-4 py-2">Loja 1007</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2"><span class="text-red-600 font-bold">(Exceção)</span> Sazonal</td>
+                                                <td class="px-4 py-2">Todos</td>
+                                                <td class="px-4 py-2 text-center"><button class="text-red-500 hover:text-red-700" title="Excluir"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'condicoes-financeiras':
+                     content = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Tipo de Investimento</label>
+                                <div class="mt-2 flex space-x-4"><label class="flex items-center"><input type="radio" name="investimento" class="h-4 w-4 text-blue-600"><span class="ml-2">Percentual (%)</span></label><label class="flex items-center"><input type="radio" name="investimento" class="h-4 w-4 text-blue-600"><span class="ml-2">Valor Fixo (R$)</span></label></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Base do Investimento</label>
+                                <select class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option>Compras Brutas</option><option>Líquido (sem ICMS, ST, IPI)</option><option>Líquido (sem todos os impostos)</option></select>
+                            </div>
+                        </div>
+                        <div class="mt-8 border-t pt-6">
+                            <h4 class="font-medium text-gray-900">Cláusulas e Contas Financeiras</h4>
+                            <div class="mt-4 border rounded-lg p-4 bg-gray-50"><h5 class="font-semibold">Cláusulas do Contrato</h5><p class="text-sm text-gray-600 mt-2">"Cláusula 1: O presente contrato tem por objeto... Cláusula 2: O pagamento será efetuado mediante..."</p></div>
+                            <div class="mt-4 border rounded-lg p-4"><h5 class="font-semibold">Contas Financeiras</h5><div class="mt-2 text-sm space-y-2"><div class="flex justify-between items-center"><span>Conta Débito: <span class="font-mono bg-gray-100 px-2 py-1 rounded">12345-6 (Padrão)</span></span><button class="text-blue-600 text-xs font-semibold">Alterar</button></div><div class="flex justify-between items-center"><span>Conta Crédito: <span class="font-mono bg-gray-100 px-2 py-1 rounded">78910-1 (Padrão)</span></span><button class="text-blue-600 text-xs font-semibold">Alterar</button></div></div></div>
+                        </div>
+                     `;
+                    break;
+                case 'amarracao-debitos':
+                    if (contractType === 'compra') {
+                        content = `
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Amarração de Contratos (Sell-in)</h3>
+                            <p class="text-sm text-gray-500 mb-4">Associe este contrato a promoções ou pedidos de compra específicos.</p>
+                            <button class="bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-lg hover:bg-blue-200">+ Associar Pedido ou Promoção</button>
+                        `;
+                    } else { // Venda
+                        content = `
+                            <div class="mb-8"><h3 class="text-lg font-medium text-gray-900">Geração Automática de Contrato</h3><div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg mt-2"><div><span class="font-medium">Gerar contrato com base em promoção</span><p class="text-xs text-gray-500">O sistema gerará este contrato automaticamente com base nas vendas dos itens da promoção selecionada.</p></div><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all"></div></label></div></div>
+                            <div><h3 class="text-lg font-medium text-gray-900 mb-2">Geração de Múltiplos Débitos (Parcelamento)</h3><div class="max-w-xs"><label for="parcelas" class="block text-sm font-medium text-gray-700">Número de Parcelas</label><input type="number" id="parcelas" value="1" min="1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div id="parcelas-container" class="mt-4 space-y-3"></div></div>
+                        `;
+                    }
+                    break;
+                case 'template':
+                    content = `<div class="text-center p-10 border-2 border-dashed rounded-lg"><svg class="mx-auto h-24 w-24 text-blue-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5,6.5v12A1.5,1.5,0,0,0,5,20H19a1.5,1.5,0,0,0,1.5-1.5V9.75M8.5,4H15" fill="#4285f4" stroke="#fff" stroke-width="0.5" /><path d="M8.5,4,8.5,9.25,15,9.25" fill="#e8e8e8" stroke="#fff" stroke-width="0.5" /></svg><h3 class="mt-2 text-lg font-medium text-gray-900">Visualização do Contrato</h3><p class="mt-1 text-sm text-gray-500">O template do documento Word com os dados preenchidos será exibido aqui.</p></div>`;
+                    break;
+                case 'contabilidade':
+                    content = `<div class="bg-white rounded-lg shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200 text-sm"><thead class="bg-gray-50"><tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="px-4 py-3">Data</th><th class="px-4 py-3">Nota Fiscal</th><th class="px-4 py-3">Ordem Venda</th><th class="px-4 py-3">Pedido Compra</th>
+                        <th class="px-4 py-3">Conta</th><th class="px-4 py-3">Centro Lucro</th><th class="px-4 py-3">Material</th><th class="px-4 py-3">Centro/Local</th>
+                        <th class="px-4 py-3">Referência</th><th class="px-4 py-3">Usuário</th></tr></thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td class="px-4 py-2">23/07/2025</td><td class="px-4 py-2">58421</td><td class="px-4 py-2">OV9514</td><td class="px-4 py-2">-</td>
+                            <td class="px-4 py-2">41101001</td><td class="px-4 py-2">101101</td><td class="px-4 py-2">30012345</td><td class="px-4 py-2">BR01/1007</td>
+                            <td class="px-4 py-2">CTR-53301</td><td class="px-4 py-2">Sistema</td>
+                        </tr>
+                        <tr class="bg-gray-50">
+                            <td class="px-4 py-2">24/07/2025</td><td class="px-4 py-2">58499</td><td class="px-4 py-2">-</td><td class="px-4 py-2">PC75842</td>
+                            <td class="px-4 py-2">21102002</td><td class="px-4 py-2">202202</td><td class="px-4 py-2">10054321</td><td class="px-4 py-2">BR01/1008</td>
+                            <td class="px-4 py-2">CTR-10324</td><td class="px-4 py-2">Financeiro</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-2">25/07/2025</td><td class="px-4 py-2">58530</td><td class="px-4 py-2">OV9518</td><td class="px-4 py-2">-</td>
+                            <td class="px-4 py-2">41101001</td><td class="px-4 py-2">101101</td><td class="px-4 py-2">30012346</td><td class="px-4 py-2">BR01/1007</td>
+                            <td class="px-4 py-2">CTR-53301</td><td class="px-4 py-2">Sistema</td>
+                        </tr>
+                        </tbody></table></div></div>`;
+                    break;
+                case 'historico':
+                    content = `<div class="bg-white rounded-lg shadow-sm overflow-hidden"><div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuário</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo de Modificação</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detalhes</th></tr></thead><tbody class="bg-white divide-y divide-gray-200"><tr><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">20/07/2025 10:30</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 font-medium">Pamela</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-pill status-aprovado">Aprovado</span></td><td class="px-6 py-4 text-sm text-gray-500">Contrato aprovado pelo diretor. Status alterado de 'Pendente' para 'Aprovado'.</td></tr><tr class="bg-gray-50"><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">21/07/2025 15:00</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 font-medium">Sistema (Fornecedor)</td><td class="px-6 py-4 whitespace-nowrap text-sm"><span class="status-pill status-assinado">Assinado</span></td><td class="px-6 py-4 text-sm text-gray-500">Contrato assinado digitalmente pelo fornecedor. Status alterado de 'Aguardando' para 'Assinado'.</td></tr><tr><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">22/07/2025 14:00</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 font-medium">Cleuter</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">Alteração de Vigência</td><td class="px-6 py-4 text-sm text-gray-500"><div class="font-mono text-xs"><p><span class="font-semibold">Campo:</span> Vigência Até</p><p><span class="text-red-600">- Valor Antigo:</span> 22/07/2026</p><p><span class="text-green-600">+ Valor Novo:</span> 31/12/2026</p></div></td></tr></tbody></table></div></div>`;
+                    break;
+            }
+            container.innerHTML = content;
+
+            // Adiciona listeners para interatividade da aba Escopo
+            if (tabId === 'escopo') {
+                const toggle = document.getElementById('considerar-novos-toggle');
+                const options = document.getElementById('considerar-novos-options');
+                if (toggle && options) {
+                    toggle.addEventListener('change', () => {
+                        options.style.display = toggle.checked ? 'block' : 'none';
+                    });
+                }
+            }
+
+            // Adiciona o listener para parcelas se a aba for a correta
+            if (tabId === 'amarracao-debitos' && contractType === 'venda') {
+                const parcelasInput = document.getElementById('parcelas');
+                const parcelasContainer = document.getElementById('parcelas-container');
+
+                function updateParcelas() {
+                    if (!parcelasInput) return;
+                    const count = parseInt(parcelasInput.value) || 1;
+                    parcelasContainer.innerHTML = '';
+                    for (let i = 1; i <= count; i++) {
+                        const parcelaDiv = document.createElement('div');
+                        parcelaDiv.className = 'bg-gray-50 p-3 rounded-lg flex justify-between items-center fade-in';
+                        parcelaDiv.innerHTML = `<span class="font-mono text-sm">Débito ${i}/${count}: Valor [R$ XXX], Vencimento [DD/MM/AAAA]</span><button class="text-red-500 text-xs font-bold">CANCELAR</button>`;
+                        parcelasContainer.appendChild(parcelaDiv);
+                    }
+                }
+                
+                if (parcelasInput && parcelasContainer) {
+                    parcelasInput.addEventListener('input', updateParcelas);
+                    updateParcelas(); // Initial call
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
