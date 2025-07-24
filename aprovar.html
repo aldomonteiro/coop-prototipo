@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxo de Aprovação de Contrato</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .summary-item {
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .summary-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-4xl mx-auto">
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
+            
+            <!-- Título -->
+            <header class="mb-6 pb-4 border-b">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Aprovação de Contrato Nº 25012</h1>
+                <p class="text-gray-500 mt-1">Revise os detalhes abaixo e tome uma ação.</p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Coluna Principal (Resumo e Decisão) -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Resumo do Contrato -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 mb-3">Resumo do Contrato</h2>
+                        <div class="bg-gray-50 p-6 rounded-lg border">
+                            <div class="space-y-4 text-sm">
+                                <div class="summary-item grid grid-cols-3 gap-4">
+                                    <strong class="text-gray-600 col-span-1">Tipo:</strong>
+                                    <span class="text-gray-800 col-span-2">Contrato de Venda</span>
+                                </div>
+                                <div class="summary-item grid grid-cols-3 gap-4">
+                                    <strong class="text-gray-600 col-span-1">Fornecedor:</strong>
+                                    <span class="text-gray-800 col-span-2">Coca-Cola Indústrias</span>
+                                </div>
+                                <div class="summary-item grid grid-cols-3 gap-4">
+                                    <strong class="text-gray-600 col-span-1">Comprador:</strong>
+                                    <span class="text-gray-800 col-span-2">João Silva</span>
+                                </div>
+                                <div class="summary-item grid grid-cols-3 gap-4">
+                                    <strong class="text-gray-600 col-span-1">Vigência:</strong>
+                                    <span class="text-gray-800 col-span-2">01/08/2025 - 31/10/2025</span>
+                                </div>
+                                <div class="summary-item grid grid-cols-3 gap-4">
+                                    <strong class="text-gray-600 col-span-1">Investimento:</strong>
+                                    <span class="text-gray-800 col-span-2">5% sobre Compras Brutas</span>
+                                </div>
+                                <div class="summary-item grid grid-cols-3 gap-4">
+                                    <strong class="text-gray-600 col-span-1">Resumo do Escopo:</strong>
+                                    <p class="text-gray-800 col-span-2">Considera todos os produtos do departamento 'Bebidas' para todas as lojas, EXCETO os itens sazonais na loja 1007.</p>
+                                </div>
+                                <div class="pt-4 text-center">
+                                    <a href="#" class="font-medium text-blue-600 hover:text-blue-800">Ver Detalhes Completos do Contrato &rarr;</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção de Decisão -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 mb-3">Seção de Decisão</h2>
+                        <div class="bg-gray-50 p-6 rounded-lg border">
+                            <div>
+                                <label for="comentarios" class="block text-sm font-medium text-gray-700">Comentários (Obrigatório em caso de reprovação)</label>
+                                <textarea id="comentarios" name="comentarios" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Adicione seu parecer ou o motivo da reprovação..."></textarea>
+                            </div>
+                            <div class="mt-4 flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
+                                <button id="reprovar-btn" disabled class="w-full sm:w-auto inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-gray-200 disabled:cursor-not-allowed disabled:text-gray-400">
+                                    Reprovar Contrato
+                                </button>
+                                <button id="aprovar-btn" class="w-full sm:w-auto inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                    Aprovar Contrato
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna Lateral (Histórico) -->
+                <div class="lg:col-span-1">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-3">Histórico de Ações</h2>
+                    <div class="bg-white p-4 rounded-lg border">
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 9.586V7z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-gray-800">Enviado para aprovação</p>
+                                    <p class="text-xs text-gray-500">24/07/2025 11:48 - por Maria Oliveira</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L9.414 11H13a1 1 0 100-2H9.414l1.293-1.293z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-gray-800">Contrato criado</p>
+                                    <p class="text-xs text-gray-500">24/07/2025 11:45 - por Maria Oliveira</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const comentariosTextarea = document.getElementById('comentarios');
+            const reprovarBtn = document.getElementById('reprovar-btn');
+
+            comentariosTextarea.addEventListener('input', function() {
+                if (comentariosTextarea.value.trim() !== '') {
+                    reprovarBtn.disabled = false;
+                } else {
+                    reprovarBtn.disabled = true;
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
